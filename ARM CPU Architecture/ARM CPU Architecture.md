@@ -23,7 +23,7 @@ ARM的命名分为指令集架构、处理器架构、处理器型号三类命�
   | ARMv5 | ARM7EJ、ARM9E、ARM10E、XScale                                |                 |
   | ARMv6 | ARM11、Cortex-M                                              | S3C6440         |
   | ARMv7 | Cortex-M、Cortex-A、Cortex-R                                 |                 |
-  | ARMv8 | Cortex-A32、A35、A53、A57、A72、A73<br />Cortex-M23、M33、M35P、M55 |                 |
+  | ARMv8 | Cortex-A32、A35、A53、A57、A72、A73<br />Cortex-R52<br />Cortex-M23、M33、M35P、M55 |                 |
   | ARMv9 |                                                              |                 |
 
 - ![Arm architecture 的版本](figures/Arm architecture 的版本.png)
@@ -39,8 +39,10 @@ ARM的命名分为指令集架构、处理器架构、处理器型号三类命�
 - Cortex-R 系列：
   - 针对实时系统，即 "Real-Time"-Profile，侧重于实时系统的场合。
   - 针对需要运行实时操作的系统应用，面向如汽车制动系统、动力传动解决方案、大容量存储控制器等深层嵌入式实时应用。
-  - 能安全 (ARMv7 指令集架构)：R4，R5
-  - 存储、调制解调  (ARMv7 指令集架构)：R7，R8
+  - ARMv7 指令集架构
+    - 功能安全：R4，R5
+    - 存储、调制解调：R7，R8
+  - ARMv8 指令集架构：R52
 - Cortex-A 系列：
   - 面向尖端的基于虚拟内存的操作系统和用户应用，即 “Application”-Profile，侧重于应用功能的场合。
   - 针对日益增长的消费娱乐和无线产品设计，用于具有高计算要求、运行丰富操作系统及提供交互媒体和图形体验的应用领域。
@@ -112,8 +114,16 @@ ARM的命名分为指令集架构、处理器架构、处理器型号三类命�
   - Armv8-A 架构引入了使用 64 位和 32 位执行状态的能力，分别称为 AArch64 和 AArch32。
   - AArch64 执行状态支持 A64 指令集。 它在 64 位寄存器中保存地址，并允许基本指令集中的指令使用 64 位寄存器进行处理。 
   - AArch32 执行状态是一个 32 位执行状态，它保留了与 Armv7-A 架构的向前兼容性，增强了该配置文件，使其可以支持 Arch64 状态中包含的某些功能。 它支持 T32 和 A32 指令集。
+  - 节能 (Ultra High Efficiency) 
+    - ARMv8 指令集架构: A32，A35
+  - 平衡 (High Efficiency) 
+    - ARMv8 指令集架构: A53
+  - 性能 (High Performance) 
+    - ARMv8 指令集架构: A57，A72、A73
 - ARMv8-R
+  - ARMv8 指令集架构：R52
 - ARMv8-M
+  - ARMv8 指令集架构：Cortex-M23、M33、M35P、M55：M23是冯诺依曼架构，其它都是哈佛架构。
 
 
 
