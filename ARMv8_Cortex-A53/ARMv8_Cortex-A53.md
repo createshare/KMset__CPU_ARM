@@ -53,4 +53,55 @@
 
 
 
+# ARMv8 寄存器组
+
+AArch64 执行状态在所有的异常级别下提供了 31 个 64 位通用寄存器，每一个寄存器有 64 位宽，从 X0-X30。
+
+## AArch64 的通用寄存器组
+
+![ARMv8-A AArch64 的通用寄存器组](figures/ARMv8-A AArch64 的通用寄存器组.png)
+
+## AArch64 的特殊寄存器
+
+![ARMv8-A AAArch64 的特殊寄存器](figures/ARMv8-A AArch64 的特殊寄存器.png)
+
+- 可以看出 AArch64 与先前的寄存器组有了非常大的变化，不仅通用寄存器组的宽度和个数变多了，特殊寄存器组也非常不同。
+- 特殊寄存器组最大的变化是，先前在 ARMv7 下各种不同模式下的 BANK 寄存器组都没有了，取而代之的是不同级别异常下的 SP 指针、SPSR 以及异常返回寄存器组。
+
+
+
+- 同时为了兼容先前 ARMv7 下 AArch32 执行状态，支持从 AArch64 到 AArch32 寄存器组的映射，如下图所示：
+
+  ![ARMv8-A AArch64 到 AArch32 寄存器组的映射](figures/ARMv8-A AArch64 到 AArch32 寄存器组的映射.png)
+
+
+
+- PSTATE at AArch32。在 AArch64 中，传统的 CPSR 寄存器被 PSTATE 取代。
+
+  ![ARMv8-A AArch64 PSTATE 寄存器](figures/ARMv8-A AArch64 PSTATE 寄存器.png)
+
+## NEON 与浮点寄存器
+
+- 除了通用寄存器组之外， ARMv8 也提供了 32 个 128 位的浮点寄存器组，V0-V31。
+- 这 32 个寄存器用户保存浮点操作数用于标量浮点执行或者标量和向量操作数用于 NEON 操作。
+
+### 标量寄存器大小
+
+![ARMv8-A 标量寄存器大小](figures/ARMv8-A 标量寄存器大小.png)
+
+### 向量寄存器大小
+
+![ARMv8-A 向量寄存器大小](figures/ARMv8-A 向量寄存器大小.png)
+
+针对不同大小的向量操作：
+
+![ARMv8-A 向量 不同大小的向量操作](figures/ARMv8-A 向量 不同大小的向量操作.png)
+
+### NEON 在 AArch32 运行模式下
+
+- 在 AArch32 中，小的寄存器被打包成更大的寄存器，例如 D0 和 D1 被组合成 Q1。
+- 这就引入了一些复杂的循环依赖关系，会降低编译器向量化循环结构的能力。
+
+![ARMv8-A AArch32 NEON 运行模式](figures/ARMv8-A AArch32 NEON 运行模式.png)
+
 # 
