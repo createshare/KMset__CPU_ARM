@@ -39,7 +39,7 @@
 
 
 
-## 执行状态与异常级别 （异常级别为 EL0 - EL3）
+## 执行状态与异常级别 
 
 - 在 ARMv8 架构中定义了两种执行状态，AArch64 以及 AArch32。
 - 这两种执行状态分别用于描述执行使用 64 位宽的通用寄存器或者使用 32 位宽的通用寄存器。
@@ -51,11 +51,79 @@
 
 ![ARMv8-A Normal world-Secure world](figures/ARMv8-A Normal world-Secure world.png)
 
+### 改变执行状态
 
+- 如果你运行一个 64 位的 OS，在 EL0 想跑一个 32 位的应用程序时，系统必须改变为 AArch32 状态，当应用程序执行完成或者执行返回到 OS，需要变回 AArch64。
+- 一个 AArch32 的 OS 不能跑一个 AArch64 的应用程序。改变执行状态只能通过改变执行权级实现。
+- 在 EL3 的 code 不能进入到更高的特权级中，所以 EL3 中不能改变执行状态，除非重启。
+- 回到 AArch32 执行状态是通过更高的 ELn 到低的 ELn，这是通过 ERET 指令退出异常处理的结果。
+- 回到 AArch64 执行状态是通过更低的 ELn 到高的 ELn。
+- ARMv8 在 AArch32 下的异常处理类似于 armV7 的异常处理，AArch64 下的异常处理有 AArch64 Exception Handling。
+- 一个 AArch64 的 hypervisor 可以 host AArch32 和 AArch64 的 guest OS， 一个 AArch64 的 OS 可以 host AArch32 和 AArch64 的应用程序，反之则不行。
+
+![ARMv8-A 改变执行状态](figures/ARMv8-A 改变执行状态.png)
+
+
+
+## 执行级别
+
+- 在 ARMv8 架构中，有4个执行级别。在 AArch64 中，这四个级别决定了执行的特权，armv7 中也有类似的特权级别。
+- ELn，n 越大特权越高。软件执行在不同的级别，从而实现了不同域的保护。
+  - EL0 应用程序
+  - EL1 操作系统
+  - EL2 hypervisor虚拟机
+  - EL3 底层固件，包括secure monitor
+
+- ARMv8-A 有两个安全状态， Secure 和 Non-secure。如图，Non-secure 指n ormal world。
+- 这样能使一个 OS 和一个受信任的 OS 一起运行在同一个硬件上，并且提供确定的软件/硬件攻击保护。
+- ARM TrustZone 技术将整个系统分为Normal 和 Secure worlds。 
+
+### ELn 之间的转换规则
+
+1. 当转为更高权级表明软件执行特权变高，如 EL0----> EL1
+2. 一个异常不可能导致更低的权级
+3. 在 EL0 中没有异常处理函数，异常处理函数必须在更高级别中去处理
+4. 异常会改变程序执行流程，执行异常处理从高于 EL0 的异常向量表开始。异常：
+   中断，如 IRQ FIQ 系统调用。。。。。。。。。
+5. 异常处理结尾返回上一个特权级别的指令：ERET
+6. 从一个异常返回时可以保持同一个特权级或者进入一个更低的级。不能进入更高的级别。
+   
+
+### Normal world（Non-secure）有特权的组件
+
+- Guest OS kernel
+  - 当在hypervisor下运行时，**这些OS可以作为guest 还是 host取决于hypervisor model.**
+- hypervisor
+  - ARMv8-A 提供虚拟技术 hypervisor，其仅在 Normal world（Non-secure）。
+  - 当hypervisor 其被 enable 后，为其他 OS 提供虚拟服务
+  - hypervisor， 即虚拟机管理 (VMM) 代码可以在系统中运行并且可以主持多个 guest OS。
+  - 每个 guest OS 运行在一个虚拟机上，并无意识地和其他 guest OS 共享时间。
+
+### Secure world 有特权的组件
+
+- Secure firmware: 
+  - firmware 是第一个被执行的 boot 程序。它提供几个服务，包括平台初始化， trusted OS 的安装， secure monitor 的路由
+- trusted OS 
+  - trusted OS 为 normal world 提供安全服务， 为安全或者信任的应用程序提供运行环境。
+  - AArch64 指令集中，Trusted OS 在 secure EL1, 但是在 AArch32 中，它在 EL3 执行。
+
+### Secure monitor
+
+- ARMv8 的 Secure monitor 不属于Normal world 和 Secure world，它单独处于一个更高级别 EL3
+- 和 ARMv7 一样， Secure monitor 扮演一个 Norma l和 Secure worlds 之间的网关角色。
+- 
 
 # ARMv8 寄存器组
 
-AArch64 执行状态在所有的异常级别下提供了 31 个 64 位通用寄存器，每一个寄存器有 64 位宽，从 X0-X30。
+- AArch64 和 AArch32， 决定使用 64 位宽的通用寄存器还是 32 位宽的通用寄存器。
+- AArch32 
+  - AArch32 使用 A32 指令集合 T32 (Thumb)指令集
+
+- AArch64
+  -  AArch64 执行状态在所有的异常级别下提供了 31 个 64 位通用寄存器，每一个寄存器有 64 位宽，从 X0-X30。
+  - AArch64 使用 A64指令集
+
+
 
 ## AArch64 的通用寄存器组
 
